@@ -1,0 +1,28 @@
+{
+  "author": "Dmitrii Zakharov",
+  "bugs": "https://gitlab.com/senior-debugger/vite-plugin-obscure-data/issues/",
+  "description": "Vite plugin for encoding and embedding Base64-encoded content into JavaScript/TypeScript source files.",
+  "devDependencies": {
+    "@types/node": "^24.1.0",
+    "buffer": "^6.0.3",
+    "terser": "^5.43.1",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.5",
+    "vite-plugin-dts": "^4.5.4"
+  },
+  "keywords": [
+    "base64",
+    "string",
+    "vite-plugin-conceal"
+  ],
+  "license": "ISC",
+  "main": "dist/vite-plugin-conceal.umd.js",
+  "module": "dist/vite-plugin-conceal.es.js",
+  "name": "vite-plugin-conceal",
+  "repository": "senior-debugger/vite-plugin-conceal",
+  "scripts": {
+    "build": "vite build"
+  },
+  "types": "dist/index.d.ts",
+  "version": "1.0.1"
+}
