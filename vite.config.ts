@@ -4,24 +4,29 @@ import dts from 'vite-plugin-dts';
 
 export default defineConfig({
   build: {
+    emptyOutDir: true,
+    minify: 'esbuild',
     lib: {
+      formats: ['es', 'cjs'],
       entry: path.resolve(__dirname, 'src/index.ts'),
       name: 'vite-plugin-conceal',
-      fileName: (format) => `vite-plugin-conceal.${format}.js`
+      fileName: (format) => `vite-plugin-conceal.${format}.js`,
     },
     rollupOptions: {
       external: [],
       output: {
+        exports: 'named',
         globals: {}
       }
     },
     sourcemap: true,
-    minify: 'terser'
   },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
     }
   },
-  plugins: [dts()]
+  plugins: [
+    dts(),
+  ],
 });

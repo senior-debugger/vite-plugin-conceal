@@ -5,8 +5,10 @@ import { parseObject } from '@/utils/object';
 /**
  * Decode Base64-encoded source back into JavaScript objects.
  */
-export default function decode(source: any[]): any[] {
-  if (!Array.isArray(source)) return source;
+export const decode = (source: any[]): any[] => {
+  if (!Array.isArray(source)) {
+    return source;
+  }
 
   const decoded = source.map((item) => {
     const obj: Record<string, any> = {};

@@ -1,9 +1,3 @@
-import encode from './core/encode';
-import decode from './core/decode';
-
-export {
-  encode,
-  decode,
-};
-
-export default encode;
+export { encode } from './utils/encode';
+export { decode } from './utils/decode';
+export { plugin as default } from './core/plugin';
