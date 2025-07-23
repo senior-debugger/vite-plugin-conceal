@@ -1,8 +1,9 @@
-import { default as encode } from './core/encode';
-export { default as decode } from './core/decode';
+import encode from './core/encode';
+import decode from './core/decode';
 
 export {
   encode,
+  decode,
 };
 
 export default encode;

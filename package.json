@@ -1,6 +1,6 @@
 {
   "author": "Dmitrii Zakharov",
-  "bugs": "https://gitlab.com/senior-debugger/vite-plugin-obscure-data/issues/",
+  "bugs": "https://gitlab.com/senior-debugger/vite-plugin-conceal/issues/",
   "description": "Vite plugin for encoding and embedding Base64-encoded content into JavaScript/TypeScript source files.",
   "devDependencies": {
     "@types/node": "^24.1.0",

@@ -1781,11 +1781,12 @@ function requireBuffer() {
   return buffer;
 }
 var bufferExports = requireBuffer();
-function plugin() {
+function plugin(config) {
+  const pattern = config.pattern ?? /\.conceal\.(js|ts)x?$/;
   return {
     name: "vite-plugin-conceal",
     transform(code, id) {
-      if (!/\\.conceal\\.(js|ts)x?$/.test(id)) {
+      if (!pattern.test(id)) {
         return;
       }
       try {
@@ -1804,7 +1805,10 @@ function plugin() {
           }
           return encodedObj;
         });
-        const transformedCode = `export default ${JSON.stringify(encoded)};`;
+        const transformedCode = `
+          import { decode } from 'vite-plugin-conceal';
+          export default decode(${JSON.stringify(encoded)});
+        `;
         return {
           code: transformedCode,
           map: null

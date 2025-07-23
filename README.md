@@ -1,6 +1,6 @@
 # vite-plugin-conceal
 
-🔐 A Vite plugin to encode sensitive or structured source data into Base64 at build time — useful for hiding static content from source code while preserving runtime access.
+🔐 A Vite plugin to encode structured or sensitive source data into Base64 at build time — useful for hiding static content from source code while keeping it accessible at runtime.
 
 [![npm version](https://img.shields.io/npm/v/vite-plugin-conceal.svg)](https://www.npmjs.com/package/vite-plugin-conceal)
 [![License: ISC](https://img.shields.io/badge/license-ISC-blue.svg)](https://opensource.org/licenses/ISC)
@@ -9,7 +9,7 @@
 
 ## 💡 Why?
 
-When building web apps, some static data (like quiz questions, configs, or embedded texts) can be easily extracted from bundled files. This plugin encodes such data into Base64 strings during build time, slightly obfuscating the content while keeping it accessible at runtime.
+When building web apps, some static data (like quiz questions, configs, or embedded texts) can be easily extracted from bundled files. This plugin obfuscates such data by encoding it into Base64 at build time, while preserving its structure and usability at runtime.
 
 ---
 
@@ -27,11 +27,14 @@ yarn add vite-plugin-conceal --dev
 
 ---
 
-## 🚀 Usage
+## 🚀 Quick Start (Automatic Mode)
 
-### 1. Add the plugin to `vite.config.ts`
+By default, the plugin transforms any file matching a pattern like `.conceal.ts` or `.conceal.js`, wraps the encoded data in a runtime `decode()` call, and exports it.
+
+### 1. Configure the plugin
 
 ```ts
+// vite.config.ts
 import { defineConfig } from 'vite';
 import conceal from 'vite-plugin-conceal';
 
@@ -40,77 +43,85 @@ export default defineConfig({
 });
 ```
 
----
+### 2. Create a `.conceal.ts` or `.conceal.js` file
 
-### 2. Create a `.conceal.ts` (or `.js`) file
-
-Create a file named `data.conceal.ts` (or any filename that ends with `.conceal.js`) containing your static data:
-
-```js
-const data1 = {
-  header: 'What is the capital of France?',
-  questions: [{ text: 'Paris', isRight: true }],
+```ts
+// data.conceal.ts
+const question = {
+  title: 'Capital of France?',
+  answers: [{ text: 'Paris', isRight: true }],
 };
 
-const data2 = {
-  title: 'JS or JSON?',
-  text: 'This is a test page',
+const info = {
+  meta: 'Trivia',
+  note: 'Simple test data',
 };
 
-// Required variable name:
-const base64data = [data1, data2];
+// Required export name:
+const base64data = [question, info];
 ```
 
----
-
-### 3. Import the encoded data
+### 3. Import and use
 
 ```ts
-import decode from 'vite-plugin-conceal/decode';
+import data from './data.conceal.ts';
 
-import data from './data.conceal.js';
-
-console.log('Decoded content:', decode(data));
+console.log('Decoded data:', data);
 ```
 
----
-
-## 📦 Build Output
-
-The plugin replaces your `.conceal.ts` files with code like:
+Behind the scenes, the plugin transforms it to:
 
 ```ts
-export default [
-  {
-    header: "V2hhdCBpcyB0aGUgY2FwaXRhbCBvZiBGcmFuY2U/==",
-    questions: "W3sidGV4dCI6IlBhcmlzIiwiaXNSaWdodCI6dHJ1ZX1d"
-  },
-  ...
-];
+import { decode } from 'vite-plugin-conceal';
+export default decode([...]);
 ```
 
 ---
 
-## 🔓 Decoding
+## ⚙️ Plugin Options
 
-You can use the built-in decoder at runtime:
+You can customize which files are transformed:
 
 ```ts
-import decode from 'vite-plugin-conceal/decode';
+conceal({
+  pattern: /\.conceal\.(js|ts)x?$/,
+});
+```
 
-const decoded = decode(encodedData);
+### `pattern`
+
+- **Type:** `RegExp`
+- **Default:** `/\.conceal\.(js|ts)x?$/`
+- **Purpose:** Specifies which files will be matched and encoded automatically.
+
+#### Example:
+
+```ts
+conceal({
+  pattern: /\.securedata\.ts$/, // Only transform files ending with `.securedata.ts`
+});
 ```
 
 ---
 
-## 📁 Output Structure
+## 🧩 Manual Usage
 
+You can also use the plugin's internal utilities directly:
+
+### Encode manually
+
+```ts
+import { encode } from 'vite-plugin-conceal';
+
+const encoded = encode([{ title: 'Secret' }]);
 ```
-src/
-  data.loader.js       ← your source file
-  ...
-dist/
-  data.loader.js       ← replaced with encoded export
+
+### Decode manually
+
+```ts
+import { decode } from 'vite-plugin-conceal';
+
+const decoded = decode(encoded);
 ```
 
 ---
@@ -118,20 +129,6 @@ dist/
 ## 🛡 Disclaimer
 
 This plugin does **not provide real security** — it merely hides data from plain sight. Do **not** use it to protect passwords, tokens, or private keys.
-
----
-
-## 🧪 Development
-
-Clone and link locally to test:
-
-```bash
-npm link
-# In your vite project:
-npm link vite-plugin-conceal
-```
-
-Then `npm run build` in your target project.
 
 ---
 

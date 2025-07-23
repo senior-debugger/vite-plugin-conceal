@@ -1,12 +1,18 @@
-import type { Plugin } from 'vite';
+import * as Vite from "vite";
 import { Buffer } from 'buffer';
 
-function plugin(): Plugin {
+interface IPluginConfig {
+  pattern?: RegExp;
+}
+
+export default function plugin(config: IPluginConfig): Vite.Plugin {
+  const pattern = config.pattern ?? /\.conceal\.(js|ts)x?$/;
+
   return {
     name: 'vite-plugin-conceal',
 
     transform(code, id) {
-      if (!/\\.conceal\\.(js|ts)x?$/.test(id)) {
+      if (!pattern.test(id)) {
         return;
       }
 
@@ -31,7 +37,10 @@ function plugin(): Plugin {
           return encodedObj;
         });
 
-        const transformedCode = `export default ${JSON.stringify(encoded)};`;
+        const transformedCode = `
+          import { decode } from 'vite-plugin-conceal';
+          export default decode(${JSON.stringify(encoded)});
+        `;
 
         return {
           code: transformedCode,
@@ -45,5 +54,3 @@ function plugin(): Plugin {
     }
   };
 }
-
-export default plugin;
