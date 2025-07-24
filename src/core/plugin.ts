@@ -6,8 +6,17 @@ interface IPluginConfig {
   pattern?: RegExp;
 }
 
-function evaluate(code: string) {
-  const transformed = code.replace(/^export\s+default/, 'return');
+interface Syntax {
+  cjs: boolean;
+  esm: boolean;
+}
+
+const evaluate = (code: string, syntax: Syntax) => {
+  const pattern = syntax.cjs
+    ? /\bmodule\.exports\s*=\s*/
+    : /^export\s+default/;
+
+  const transformed = code.replace(pattern, 'return');
   const wrapped = `(function() { ${transformed} })()`;
 
   return eval(wrapped);
@@ -24,29 +33,34 @@ export const plugin = (config: IPluginConfig = {}): Vite.Plugin => {
         return;
       }
 
-      try {
-        const data = evaluate(code);
+      const syntax: Syntax = {
+        cjs: /\bmodule\.exports\b/.test(code),
+        esm: /\bexport\s+default\b/.test(code),
+      };
 
-        if (!data || !Array.isArray(data)) {
-          this.warn(`vite-plugin-conceal: No valid default export found in ${id}`);
-          return null;
-        }
+      const data = evaluate(code, syntax);
 
-        const encoded = encode(data);
-        const transformedCode = `
+      if (!data || !Array.isArray(data)) {
+        return {
+          code,
+          map: null
+        };
+      }
+
+      const encoded = encode(data);
+      const transformedCode = syntax.cjs
+        ? `
+          const { decode } = require('vite-plugin-conceal');
+          module.exports = decode(${JSON.stringify(encoded)});
+        ` : `
           import { decode } from 'vite-plugin-conceal';
           export default decode(${JSON.stringify(encoded)});
         `;
 
-        return {
-          code: transformedCode,
-          map: null
-        };
-      } catch (error) {
-        this.error(`vite-plugin-conceal: Failed to load ${id} — ${error}`);
-      }
-
-      return null;
+      return {
+        code: transformedCode,
+        map: null
+      };
     }
   };
 }
