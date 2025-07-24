@@ -27,7 +27,7 @@ export default decode([
 ]);
 ```
 
-Then, at runtime, the `decode()` function will decode the Base64 strings and parse them back to their original values:
+Then, at runtime, the `decode()` function will automatically decode the Base64 strings and parse them back to their original values:
 
 ```js
 [
@@ -42,7 +42,7 @@ This makes it harder for tools or users inspecting your production JavaScript to
 
 ## Features
 
-- Transforms `.conceal.js`, `.conceal.ts`, `.conceal.jsx`, `.conceal.tsx` files
+- Transform any pattern of files (e.g.: `.conceal.js`, `.conceal.ts`, `.conceal.jsx`, `.conceal.tsx`)
 - Encodes JavaScript object arrays using Base64-encoded JSON
 - Automatically decodes data at runtime
 - Lightweight and easy to configure
@@ -74,11 +74,19 @@ export default {
 ### 2. Create a `.conceal.ts` or `.conceal.js` file
 
 ```ts
-// data.conceal.ts
+// users.conceal.ts
 export default [
   { name: 'Alice', age: 30 },
   { name: 'Bob', age: 25 }
 ];
+```
+
+### 3. Import created before file(s) somewhere in the application.
+
+```ts
+import usersData from './users.conceal';
+
+console.log(usersData);
 ```
 
 ---
