@@ -64,7 +64,7 @@ yarn add vite-plugin-conceal
 ### 1. Add to `vite.config.js`
 
 ```ts
-import { plugin as concealPlugin } from 'vite-plugin-conceal';
+import concealPlugin from 'vite-plugin-conceal';
 
 export default {
   plugins: [concealPlugin()],
